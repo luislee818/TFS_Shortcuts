@@ -81,6 +81,7 @@ Rem new line
 :Checkout
 	cd %localCheckoutPath%
 	%localPathRoot%
+	REM "%~2" will remove quotes around %2, need 'setlocal ENABLEEXTENSIONS'
 	if "%~2"=="" (
 		echo Checkout JS files from %devBranch%
 		tf checkout /recursive %localCheckoutFiles%
