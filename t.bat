@@ -1,5 +1,6 @@
 @echo off
 setlocal
+setlocal ENABLEEXTENSIONS
 
 set localPath=C:\Workspace\Staples 2.5
 set localPathRoot=C:
@@ -22,28 +23,30 @@ if /i "%1"=="co" goto Checkout
 if /i "%1"=="checkind" goto CheckinDev
 if /i "%1"=="checkini" goto CheckinInt
 if /i "%1"=="checkinifff" goto CheckinIntForMergeNoprompt
+if /i "%1"=="undo" goto Undo
+if /i "%1"=="undod" goto UndoDev
+if /i "%1"=="undoi" goto UndoInt
 if /i "%1"=="diffdg" goto DiffDevGraphic
 if /i "%1"=="diffdt" goto DiffDevText
 if /i "%1"=="histdg" goto HistDevGraphic
 if /i "%1"=="histdt" goto HistDevText
-if /i "%1"=="undod" goto UndoDev
-if /i "%1"=="undoi" goto UndoInt
 if /i "%1"=="mergedi" goto MergeDevtoInt
 if /i "%1"=="diffmergedi" goto DiffMergeDevToInt
 goto end
 
 :ShowUsage
-	echo usage: t [command]
+	echo usage: t ^<command^>
 Rem new line
 	echo. 
 	echo command list (case insensitive):
 	echo var         - Show local variables defined in script
 	echo getD        - Get latest version of Dev branch
 	echo getI        - Get latest version of Integration branch
-	echo co          - Checkout configured files for edit
+	echo co [file]   - Checkout configured files (or passed in file) for edit
 	echo checkinD    - Checkin changes in Dev branch (GUI)
 	echo checkinI    - Checkin changes in Integration branch (GUI)
 	echo checkinIfff - (After merge) Checkin changes in Integration branch (no prompts)
+	echo undo ^<file^> - Undo pending changes in specified file (full path)
 	echo undoD       - Undo pending changes in local copy of Dev branch
 	echo undoI       - Undo pending changes in local copy of Integration branch
 	echo diffDG      - Show diff between working copy and Dev branch (GUI)
@@ -76,10 +79,15 @@ Rem new line
 	tf get /recursive %intBranch%
 	goto end
 :Checkout
-	echo Checkout JS files from %devBranch%
 	cd %localCheckoutPath%
 	%localPathRoot%
-	tf checkout /recursive %localCheckoutFiles%
+	if "%~2"=="" (
+		echo Checkout JS files from %devBranch%
+		tf checkout /recursive %localCheckoutFiles%
+	) else (
+		echo Checkout %2
+		tf checkout %2
+	)
 	goto end
 :CheckinDev
 	echo Checkin files to %devBranch%
@@ -92,6 +100,18 @@ Rem new line
 :CheckinIntForMergeNoPrompt
 	echo Checkin merging changes on %intBranch% without prompt
 	tf checkin /comment:"%intCheckinComment%" /recursive %intBranch% /noprompt
+	goto end
+:Undo
+	echo Undo local changes of %2
+	tf undo %2 /noprompt
+	goto end
+:UndoDev
+	echo Undo local changes on %devBranch%
+	tf undo /recursive %devBranch% /noprompt
+	goto end
+:UndoInt
+	echo Undo local changes on %intBranch%
+	tf undo /recursive %intBranch% /noprompt
 	goto end
 :DiffDevGraphic
 	echo Diff between %devBranch% and working copy (graphic)
@@ -108,14 +128,6 @@ Rem new line
 :HistDevText
 	echo History of %devBranch% of last %histStopAfter% commits (text)
 	tf history /recursive /stopafter:%histStopAfter% %devBranch% /noprompt
-	goto end
-:UndoDev
-	echo Undo local changes on %devBranch%
-	tf undo /recursive %devBranch% /noprompt
-	goto end
-:UndoInt
-	echo Undo local changes on %intBranch%
-	tf undo /recursive %intBranch% /noprompt
 	goto end
 :MergeDevToInt
 	echo Merge from %devBranch% to %intBranch%
