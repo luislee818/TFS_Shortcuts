@@ -53,8 +53,8 @@ Rem new line
 	echo undoI       - Undo pending changes in local copy of Integration branch
 	echo diffDG      - Show diff between working copy and Dev branch (GUI)
 	echo diffDT      - Show diff between working copy and Dev branch (Text)
-	echo histDG      - Show history of Dev branch (GUI)
-	echo histDT      - Show history of Dev branch (Text)
+	echo histDG [n]  - Show history of Dev branch for the number of commits (GUI)
+	echo histDT [n]  - Show history of Dev branch for the number of commits (Text)
 	echo mergeDI     - Merge from Dev to Integration branch
 	echo diffmergeDI - Show changesets not been merged from Dev to Integration branch
 	goto end
@@ -129,12 +129,22 @@ Rem new line
 	tf folderdiff "%serverDevBranchPath%" %devBranch% /recursive /noprompt
 	goto end
 :HistDevGraphic
-	echo History of %devBranch% of last %histStopAfter% commits (graphic)
-	tf history /recursive /stopafter:%histStopAfter% %devBranch%
+	if "%~2"=="" (
+		echo History of %devBranch% of last %histStopAfter% commits ^(graphic^)
+		tf history /recursive /stopafter:%histStopAfter% %devBranch%
+	) else (
+		echo History of %devBranch% of last %2 commits ^(graphic^)
+		tf history /recursive /stopafter:%2 %devBranch%
+	)
 	goto end
 :HistDevText
-	echo History of %devBranch% of last %histStopAfter% commits (text)
-	tf history /recursive /stopafter:%histStopAfter% %devBranch% /noprompt
+	if "%~2"=="" (
+		echo History of %devBranch% of last %histStopAfter% commits ^(text^)
+		tf history /recursive /stopafter:%histStopAfter% %devBranch% /noprompt
+	) else (
+		echo History of %devBranch% of last %2 commits ^(text^)
+		tf history /recursive /stopafter:%2 %devBranch% /noprompt
+	)
 	goto end
 :MergeDevToInt
 	echo Merge from %devBranch% to %intBranch%
