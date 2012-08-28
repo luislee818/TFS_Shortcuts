@@ -1,0 +1,9 @@
+localPathFull=C:\Workspace\Staples 2.5
+localPathRoot=C:
+localCheckoutPath=C:\Workspace\Staples 2.5\Main\Source\Navitor.StaplesPPE.Web.Public
+localCheckoutFiles=index.html scripts\main.js scripts\src scripts\tests
+serverDevBranchPath=$/Staples PPE/Main
+devBranch=Main
+intBranch=Integration
+intCheckinComment=Full merge from Dev to Integration
+histStopAfter=5

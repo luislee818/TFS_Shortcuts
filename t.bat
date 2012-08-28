@@ -2,17 +2,21 @@
 setlocal
 setlocal ENABLEEXTENSIONS
 
-set localPath=C:\Workspace\Staples 2.5
-set localPathRoot=C:
-set localCheckoutPath=C:\Workspace\Staples 2.5\Main\Source\Navitor.StaplesPPE.Web.Public
-set localCheckoutFiles=index.html scripts\main.js scripts\src scripts\tests
-set serverDevBranchPath=$/Staples PPE/Main
-set devBranch=Main
-set intBranch=Integration
-set intCheckinComment=Full merge from Dev to Integration
-set histStopAfter=10
+Rem set path of config file
+set configPath=T:\Dropbox\scripts\TFS_shortcuts\config.txt
 
-cd %localPath%
+Rem read configuration (variables) from config file
+for /f "delims== tokens=2" %%i in ('findstr localPathFull %configPath%') do set localPathFull=%%i
+for /f "delims== tokens=2" %%i in ('findstr localPathRoot %configPath%') do set localPathRoot=%%i
+for /f "delims== tokens=2" %%i in ('findstr localCheckoutPath %configPath%') do set localCheckoutPath=%%i
+for /f "delims== tokens=2" %%i in ('findstr localCheckoutFiles %configPath%') do set localCheckoutFiles=%%i
+for /f "delims== tokens=2" %%i in ('findstr serverDevBranchPath %configPath%') do set serverDevBranchPath=%%i
+for /f "delims== tokens=2" %%i in ('findstr devBranch %configPath%') do set devBranch=%%i
+for /f "delims== tokens=2" %%i in ('findstr intBranch %configPath%') do set intBranch=%%i
+for /f "delims== tokens=2" %%i in ('findstr intCheckinComment %configPath%') do set intCheckinComment=%%i
+for /f "delims== tokens=2" %%i in ('findstr histStopAfter %configPath%') do set histStopAfter=%%i
+
+cd %localPathFull%
 %localPathRoot%
 
 if "%1"=="" goto ShowUsage
@@ -61,7 +65,7 @@ Rem new line
 
 :ShowVar
 	echo The following variables are defined in the script
-	echo localPath           = %localPath%
+	echo localPathFull       = %localPathFull%
 	echo localPathRoot       = %localPathRoot%
 	echo localCheckoutPath   = %localCheckoutPath%
 	echo localCheckoutFiles  = %localCheckoutFiles%
@@ -73,11 +77,11 @@ Rem new line
 
 	goto end
 :GetDev
-	echo Get latest version of %devBranch% to %localPath%
+	echo Get latest version of %devBranch% to %localPathFull%
 	tf get /recursive %devBranch%
 	goto end
 :GetInt
-	echo Get latest version of %intBranch% to %localPath%
+	echo Get latest version of %intBranch% to %localPathFull%
 	tf get /recursive %intBranch%
 	goto end
 :Status
