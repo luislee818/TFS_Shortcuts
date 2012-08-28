@@ -20,6 +20,7 @@ if /i "%1"=="var" goto ShowVar
 if /i "%1"=="getD" goto GetDev
 if /i "%1"=="getI" goto GetInt
 if /i "%1"=="co" goto Checkout
+if /i "%1"=="stat" goto Status
 if /i "%1"=="checkind" goto CheckinDev
 if /i "%1"=="checkini" goto CheckinInt
 if /i "%1"=="checkinifff" goto CheckinIntForMergeNoprompt
@@ -43,6 +44,7 @@ Rem new line
 	echo getD        - Get latest version of Dev branch
 	echo getI        - Get latest version of Integration branch
 	echo co [file]   - Checkout configured files (or passed in file) for edit
+	echo stat        - View pending changes
 	echo checkinD    - Checkin changes in Dev branch (GUI)
 	echo checkinI    - Checkin changes in Integration branch (GUI)
 	echo checkinIfff - (After merge) Checkin changes in Integration branch (no prompts)
@@ -77,6 +79,10 @@ Rem new line
 :GetInt
 	echo Get latest version of %intBranch% to %localPath%
 	tf get /recursive %intBranch%
+	goto end
+:Status
+	echo View pending changes
+	tf stat
 	goto end
 :Checkout
 	cd %localCheckoutPath%
